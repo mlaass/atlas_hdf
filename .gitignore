@@ -13,5 +13,4 @@ cmake-build-debug
 build
 **/loc.hpp
 
-lib
 experiments/

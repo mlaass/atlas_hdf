@@ -13,3 +13,4 @@
 [submodule "lib/shapelib"]
 	path = lib/shapelib
 	url = git@github.com:mlaass/shapelib.git
+
