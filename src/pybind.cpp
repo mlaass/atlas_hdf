@@ -72,17 +72,21 @@ void map_pointcloud(const py::array_t<T> &self,
 }
 
 // The module begins
-PYBIND11_MODULE(globimap, m) {
+PYBIND11_MODULE(atlashdf, m) {
   m.def(
       "read_shapefile", +[](const std::string &filename) {
-        std::vector<uint32_t> idx;
+        std::vector<uint32_t> outer;
         std::vector<float> coords;
         size_t start = 0;
         importSHP(filename, [&](SHPObject *shp, size_t s, size_t e) {
           if (shp->nSHPType == SHPT_POLYGON) {
-            idx.push_back(start + s);
+            if (s != 0) {
+              std::cout << "WARNING SUB POLYGON ARE NOT HANDLED CORRECTLY!!"
+                        << std::endl;
+            }
+            outer.push_back(start + s);
             size_t d = e - s;
-            idx.push_back(d);
+            outer.push_back(d);
             start += d;
             for (auto i = s; i < e; ++i) {
               coords.push_back(shp->padfX[i]);
@@ -90,7 +94,7 @@ PYBIND11_MODULE(globimap, m) {
             }
           }
         });
-        return std::make_tuple(wrap2D<uint32_t>(&idx[0], idx.size() / 2, 2),
+        return std::make_tuple(wrap2D<uint32_t>(&outer[0], outer.size() / 2, 2),
                                wrap2D<float>(&coords[0], coords.size() / 2, 2));
       });
 }

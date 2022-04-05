@@ -17,25 +17,32 @@ include_directories(${SOURCE_DIR})
 
 set(PYBIND_SOURCES
     src/pybind.cpp
+
+    lib/shapelib/shpopen.c
+    lib/shapelib/dbfopen.c
+    lib/shapelib/safileio.c
+    lib/shapelib/shptree.c
+    lib/shapelib/sbnsearch.c
+
 )
 
 # Generate Python module
 add_subdirectory(lib/pybind11)
-pybind11_add_module(atlas_hdf ${PYBIND_SOURCES})
-
+pybind11_add_module(atlashdf ${PYBIND_SOURCES})
 set(HIGHFIVE_USE_BOOST OFF)
 set(HIGHFIVE_EXAMPLES OFF)
 set(HIGHFIVE_BUILD_DOCS OFF)
 set(HIGHFIVE_PARALLEL_HDF5 OFF)
 
 add_subdirectory(lib/HighFive/)
-add_subdirectory(lib/shapelib/)
+#add_subdirectory(lib/shapelib/)
 
 set(SOURCES_TEST_DATASET
     tests/test_dataset.cpp
 )
 
 include_directories(
+  src
    lib/HighFive/include/highfive
    lib/HighFive/include
    lib/tqdm-cpp
@@ -44,6 +51,10 @@ include_directories(
    lib/shapelib
    )
 
+
+target_link_libraries(atlashdf
+PUBLIC HighFive
+)
 add_executable(test_dataset ${SOURCES_TEST_DATASET})
 
 find_package(OpenMP)
@@ -53,10 +64,6 @@ target_link_libraries(test_dataset
 PUBLIC HighFive
 PUBLIC OpenMP::OpenMP_CXX)
 
-# target_link_libraries(atlas_hdf
-# PUBLIC shp
-# PUBLIC OpenMP::OpenMP_CXX
-# )
 
 endif()
 

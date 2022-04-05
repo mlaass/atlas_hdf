@@ -67,16 +67,23 @@ class CMakeBuild(build_ext):
         print()  # Add an empty line for cleaner output
 
 
-setup(
-    name='globimap',
-    version='0.1.2',
+kwargs = dict(
+    name='atlashdf',
+    version='0.1.0',
     author='Martin Werner, Moritz Laass',
     author_email='moritz.laass@tum.de',
-    description='GloBiMap is a probabilistic data structure to compress sparse spatial data using bloom filters.',
+    description='AtlasHDF is a library to work with geo data using hdf5.',
     long_description='',
     # add extension module
-    ext_modules=[CMakeExtension('globimap')],
+    ext_modules=[CMakeExtension('atlashdf')],
     # add custom build_ext command
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
 )
+
+try:
+    setup(**kwargs)
+except CalledProcessError:
+    print('Failed to build extension!')
+    del kwargs['ext_modules']
+    setup(**kwargs)
